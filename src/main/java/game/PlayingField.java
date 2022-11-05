@@ -1,6 +1,5 @@
 package game;
 
-import common.Utils;
 import game.ai.*;
 
 
@@ -8,19 +7,16 @@ import menus.Page;
 import menus.Menus;
 
 import java.awt.*;
-import java.util.Map;
 
 import static common.Const.*;
-import static java.util.Map.entry;
-import static java.util.Map.ofEntries;
 
 public class PlayingField implements Page {
     private static final int VERTICAL_BOUNDARY_BUFFER = 30;
+    static final int TOP_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
+    static final int BOTTOM_BOUNDARY = WINDOW_HEIGHT - VERTICAL_BOUNDARY_BUFFER;
     private static final int HORIZONTAL_BOUNDARY_BUFFER = 30;
     private static final int LEFT_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
     private static final int RIGHT_BOUNDARY = WINDOW_WIDTH - HORIZONTAL_BOUNDARY_BUFFER;
-    public static final int TOP_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
-    public static final int BOTTOM_BOUNDARY = WINDOW_HEIGHT - VERTICAL_BOUNDARY_BUFFER;
 
     private boolean frozen;
     private boolean gameOver;
@@ -32,7 +28,7 @@ public class PlayingField implements Page {
     private final Score score;
 
     private final CollisionHandler collisionHandler;
-
+    private final InputHandler inputHandler;
     public PlayingField(int pointsToWin, int difficulty){
         frozen = false;
         playerPaddle = new Paddle(60, Color.BLUE);
@@ -41,14 +37,15 @@ public class PlayingField implements Page {
         ai = AIFactory.getAI(difficulty, computerPaddle, ball);
         score = new Score(pointsToWin);
         collisionHandler = new CollisionHandler(ball, playerPaddle, computerPaddle);
+        inputHandler = new InputHandler(this);
     }
 
     private void assessPositions(){
         collisionHandler.handleCollisions();
-        handleScoredEvents();
+        handleOnScoredEvents();
     }
 
-    private void handleScoredEvents(){
+    private void handleOnScoredEvents(){
         if(computerJustScored()){
             onComputerScored();
         }
@@ -109,19 +106,19 @@ public class PlayingField implements Page {
         }
     }
 
-    private void movePlayerUp() {
+    void movePlayerUp() {
         playerPaddle.moveUp(PLAYER_PADDLE_VELOCITY_MAGNITUDE);
     }
 
-    private void movePlayerDown(){
+    void movePlayerDown(){
         playerPaddle.moveDown(PLAYER_PADDLE_VELOCITY_MAGNITUDE);
     }
 
-    public void stopPlayer(){
+    void stopPlayer(){
         playerPaddle.stop();
     }
 
-    public void unfreeze(){
+    public void tryUnfreeze(){
         if(!frozen){
             return;
         }
@@ -139,34 +136,34 @@ public class PlayingField implements Page {
         ball.reset();
     }
 
-    private void onFPressed() {
-        unfreeze();
+    void unfreeze() {
+        tryUnfreeze();
         if (gameOver) {
             Menus.getInstance().goToMainMenu();
         }
     }
     @Override
     public void onKeyPressed(char keyChar) {
-        KEY_PRESSED_TO_ACTION.getOrDefault(keyChar, Utils::doNothing);
+        inputHandler.handleKeyPressed(keyChar);
     }
 
     @Override
     public void onKeyReleased(char keyChar) {
-        KEY_RELEASED_TO_ACTION.getOrDefault(keyChar, Utils::doNothing);
+        inputHandler.handleKeyReleased(keyChar);
     }
 
     @Override
     public void onDrag(int x, int y) {
-
+        inputHandler.handleDrag(x, y);
     }
 
     @Override
     public void onMousePressed(int x, int y) {
-
+        inputHandler.handleMousePressed(x, y);
     }
 
     @Override
     public void onMouseReleased() {
-
+        inputHandler.handleMouseReleased();
     }
 }
