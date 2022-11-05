@@ -3,7 +3,7 @@ package game.ai;
 import game.Ball;
 import game.Paddle;
 
-public class AILevel6 implements AI {
+class AILevel6 implements AI {
 
     private static final int VELOCITY_MAGNITUDE = 10;
 

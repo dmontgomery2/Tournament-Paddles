@@ -15,25 +15,12 @@ import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 
 public class PlayingField implements Page {
-
-    private final Map<Character, Runnable> KEY_PRESSED_TO_ACTION = ofEntries(
-            entry('w', this::movePlayerUp),
-            entry('s', this::movePlayerDown),
-            entry('f', this::onFPressed)
-    );
-
-    private final Map<Character, Runnable> KEY_RELEASED_TO_ACTION = ofEntries(
-            entry('w', this::stopPlayer),
-            entry('s', this::stopPlayer)
-    );
-
-
     private static final int VERTICAL_BOUNDARY_BUFFER = 30;
     private static final int HORIZONTAL_BOUNDARY_BUFFER = 30;
     private static final int LEFT_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
     private static final int RIGHT_BOUNDARY = WINDOW_WIDTH - HORIZONTAL_BOUNDARY_BUFFER;
-    private static final int TOP_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
-    private static final int BOTTOM_BOUNDARY = WINDOW_HEIGHT - VERTICAL_BOUNDARY_BUFFER;
+    public static final int TOP_BOUNDARY = VERTICAL_BOUNDARY_BUFFER;
+    public static final int BOTTOM_BOUNDARY = WINDOW_HEIGHT - VERTICAL_BOUNDARY_BUFFER;
 
     private boolean frozen;
     private boolean gameOver;
@@ -44,6 +31,8 @@ public class PlayingField implements Page {
     private final AI ai;
     private final Score score;
 
+    private final CollisionHandler collisionHandler;
+
     public PlayingField(int pointsToWin, int difficulty){
         frozen = false;
         playerPaddle = new Paddle(60, Color.BLUE);
@@ -51,25 +40,20 @@ public class PlayingField implements Page {
         ball = new Ball();
         ai = AIFactory.getAI(difficulty, computerPaddle, ball);
         score = new Score(pointsToWin);
+        collisionHandler = new CollisionHandler(ball, playerPaddle, computerPaddle);
     }
 
-    private void handleCollisions(){
-        handleBallBoundaryCollisions();
-        handleBallPaddleCollisions();
+    private void assessPositions(){
+        collisionHandler.handleCollisions();
+        handleScoredEvents();
     }
 
-    private void handleBallBoundaryCollisions(){
+    private void handleScoredEvents(){
         if(computerJustScored()){
             onComputerScored();
         }
         if(playerJustScored()){
             onPlayerScored();
-        }
-        if(ball.getPositionY() >= BOTTOM_BOUNDARY && ball.isMovingDown()){
-            ball.reflectY();
-        }
-        if(ball.getPositionY() <= TOP_BOUNDARY && ball.isMovingUp()){
-            ball.reflectY();
         }
     }
 
@@ -104,51 +88,9 @@ public class PlayingField implements Page {
                 && !gameOver;
     }
 
-    private void handleBallPaddleCollisions(){
-        handlePlayerPaddleCollisions();
-        handleComputerPaddleCollisions();
-    }
-
-    private boolean ballIsInsidePaddle(Paddle paddle){
-        return ball.getPositionX() >= paddle.getPositionX()
-                && ball.getPositionX() <= paddle.getPositionX() + Paddle.WIDTH
-                && ball.getPositionY() >= paddle.getPositionY()
-                && ball.getPositionY() <= paddle.getPositionY() + Paddle.HEIGHT;
-    }
-
-    private boolean ballIsInsidePlayerPaddle(){
-        return ballIsInsidePaddle(playerPaddle);
-    }
-
-    private boolean ballIsInsideComputerPaddle(){
-        return ballIsInsidePaddle(computerPaddle);
-    }
-
-    private void handlePlayerPaddleCollisions(){
-        if(ballIsInsidePlayerPaddle() && !ball.isMovingRight()){
-            ball.setVelocityY(getBallVelocityForPaddleCollision(playerPaddle.getPositionY()));
-            ball.reflectX();
-        }
-    }
-
-    private void handleComputerPaddleCollisions(){
-        if(ballIsInsideComputerPaddle() && ball.isMovingRight()){
-            ball.setVelocityY(getBallVelocityForPaddleCollision(computerPaddle.getPositionY()));
-            ball.reflectX();
-        }
-    }
-
-    private int getBallVelocityForPaddleCollision(int paddlePositionY){
-        int paddleCenterY = paddlePositionY + Paddle.HEIGHT / 2;
-        float distanceFromCenter = ball.getPositionY() + Ball.DIAMETER / 2 - paddleCenterY;
-        float paddleHeightAsFloat = Paddle.HEIGHT;
-        float percentageFromCenter = distanceFromCenter / paddleHeightAsFloat;
-        return (int) (percentageFromCenter * Ball.MAXIMUM_VELOCITY_Y);
-    }
-
     @Override
     public void drawSelf(Graphics g){
-        handleCollisions();
+        assessPositions();
         ai.assess();
         ball.drawSelf(g);
         playerPaddle.drawSelf(g);
@@ -212,11 +154,6 @@ public class PlayingField implements Page {
     public void onKeyReleased(char keyChar) {
         KEY_RELEASED_TO_ACTION.getOrDefault(keyChar, Utils::doNothing);
     }
-
-
-
-
-
 
     @Override
     public void onDrag(int x, int y) {

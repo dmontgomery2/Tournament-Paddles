@@ -7,7 +7,7 @@ import java.awt.*;
 import static common.Const.WINDOW_HEIGHT;
 import static common.Const.WINDOW_WIDTH;
 
-public class Score implements Drawable {
+class Score implements Drawable {
 
     private final int pointsToWin;
 
