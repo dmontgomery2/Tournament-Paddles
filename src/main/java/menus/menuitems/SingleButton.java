@@ -1,27 +1,25 @@
 package menus.menuitems;
 
+import lombok.Builder;
 import menus.Menus;
 
 import java.awt.*;
 import java.util.function.Consumer;
 
-public class SingleButton implements Button {
+import static java.awt.Color.BLACK;
+import static java.awt.Color.GREEN;
+
+@Builder
+public class SingleButton implements MenuItem {
 
     private static final int WIDTH = 150;
     private static final int HEIGHT = 75;
-    private static final Color COLOR = Color.GREEN;
-    private static final Color TEXT_COLOR = Color.BLACK;
+    private static final Color COLOR = GREEN;
+    private static final Color TEXT_COLOR = BLACK;
     private final Consumer<Menus> action;
     private final String label;
     private final int positionX;
     private final int positionY;
-
-    private SingleButton(Builder builder){
-        action = builder.action;
-        label = builder.label;
-        positionX = builder.positionX;
-        positionY = builder.positionY;
-    }
 
     private boolean isInside(int x, int y){
         return x >= positionX
@@ -50,42 +48,6 @@ public class SingleButton implements Button {
     public void onMousePressed(int x, int y) {
         if(isInside(x, y)) {
             action.accept(Menus.getInstance());
-        }
-    }
-
-    @Override
-    public void onMouseReleased() {
-
-    }
-
-    public static class Builder {
-        private Consumer<Menus> action;
-        private String label;
-        private int positionX;
-        private int positionY;
-
-        public Builder action(Consumer<Menus> action){
-            this.action = action;
-            return this;
-        }
-
-        public Builder label(String label){
-            this.label = label;
-            return this;
-        }
-
-        public Builder positionX(int positionX){
-            this.positionX = positionX;
-            return this;
-        }
-
-        public Builder positionY(int positionY){
-            this.positionY = positionY;
-            return this;
-        }
-
-        public SingleButton build(){
-            return new SingleButton(this);
         }
     }
 }

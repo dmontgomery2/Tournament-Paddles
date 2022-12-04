@@ -4,7 +4,7 @@ public enum WinLoss {
     WIN("W"),
     LOSS("L");
 
-    private String shortHand;
+    private final String shortHand;
 
     WinLoss(String shortHand){
         this.shortHand = shortHand;

@@ -1,12 +1,39 @@
 package settings;
 
-class SeasonSettings {
+public class SeasonSettings {
 
+    private String playerName;
     private int numberOfPlayers;
-    private int seasonGames;
-    private int round1Games;
-    private int round2Games;
-    private int round3Games;
+    private int numberOfGames;
+    private int pointsToWin;
+
+    private int difficulty;
+    private int round1;
+    private int round2;
+    private int round3;
+    private int paddleSize;
+
+    public String getPlayerName(){
+        return playerName;
+    }
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public int getPointsToWin() {
+        return pointsToWin;
+    }
+
+    public void setPointsToWin(int pointsToWin) {
+        this.pointsToWin = pointsToWin;
+    }
 
     public int getNumberOfPlayers() {
         return numberOfPlayers;
@@ -16,35 +43,41 @@ class SeasonSettings {
         this.numberOfPlayers = numberOfPlayers;
     }
 
-    public int getSeasonGames() {
-        return seasonGames;
+    public int getNumberOfGames() {
+        return numberOfGames;
     }
 
-    public void setSeasonGames(int seasonGames) {
-        this.seasonGames = seasonGames;
+    public void setNumberOfGames(int numberOfGames) {
+        this.numberOfGames = numberOfGames;
     }
 
-    public int getRound1Games() {
-        return round1Games;
+    public int getRound1(){
+        return round1;
     }
 
-    public void setRound1Games(int round1Games) {
-        this.round1Games = round1Games;
+    public void setRound1(int round1) {
+        this.round1 = round1;
     }
 
-    public int getRound2Games() {
-        return round2Games;
+    public int getRound2(){
+        return round2;
+    }
+    public void setRound2(int round2) {
+        this.round2 = round2;
+    }
+    public int getRound3(){
+        return round3;
+    }
+    public void setRound3(int round3){
+        this.round3 = round3;
     }
 
-    public void setRound2Games(int round2Games) {
-        this.round2Games = round2Games;
+    public int getPaddleSize(){
+        return paddleSize;
     }
 
-    public int getRound3Games() {
-        return round3Games;
+    public void setPaddleSize(int paddleSize) {
+        this.paddleSize = paddleSize;
     }
 
-    public void setRound3Games(int round3Games) {
-        this.round3Games = round3Games;
-    }
 }

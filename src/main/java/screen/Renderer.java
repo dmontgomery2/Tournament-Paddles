@@ -1,12 +1,12 @@
 package screen;
 
-import screen.Screen;
-
 public class Renderer {
 
     private static final Renderer INSTANCE = new Renderer();
 
-    private Screen screen;
+    private static final int SLEEP_TIME_MILLIS = 16;
+
+    private final Screen screen;
 
     private Renderer(){
         screen = Screen.getInstance();
@@ -27,7 +27,7 @@ public class Renderer {
 
     private void sleep(){
         try {
-            Thread.sleep(16);
+            Thread.sleep(SLEEP_TIME_MILLIS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

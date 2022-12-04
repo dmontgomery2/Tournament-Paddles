@@ -2,15 +2,14 @@ package screen;
 
 import java.awt.*;
 
-import static common.Const.WINDOW_HEIGHT;
-import static common.Const.WINDOW_WIDTH;
+import static common.Const.*;
 
 public class Screen {
 
     private static final Screen INSTANCE = new Screen();
     private static final String SCREEN_TITLE = "Tournament Paddles";
 
-    private Canvas canvas;
+    private final Canvas canvas;
 
     private Screen() {
         canvas = new Canvas();

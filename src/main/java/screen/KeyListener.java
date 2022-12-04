@@ -12,12 +12,12 @@ public class KeyListener implements java.awt.event.KeyListener{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        Menus.getInstance().onKeyPressed(e.getKeyChar());
+        Menus.getInstance().onKeyPressed(e);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        Menus.getInstance().onKeyReleased(e.getKeyChar());
+        Menus.getInstance().onKeyReleased(e);
     }
 }
 

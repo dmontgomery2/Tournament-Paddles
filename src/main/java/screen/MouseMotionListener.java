@@ -12,6 +12,6 @@ public class MouseMotionListener implements java.awt.event.MouseMotionListener{
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        //do nothing
     }
 }

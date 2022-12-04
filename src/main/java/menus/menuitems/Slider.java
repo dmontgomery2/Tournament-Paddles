@@ -1,7 +1,13 @@
 package menus.menuitems;
 
-import menus.Draggable;
+import common.genericinterfaces.Draggable;
 
-public interface Slider extends Button, Draggable {
-    int getValue();
+public interface Slider extends MenuItem, Draggable {
+    boolean isActivated();
+
+    void reset();
+
+    void resetDefaults();
+
+    void submit();
 }

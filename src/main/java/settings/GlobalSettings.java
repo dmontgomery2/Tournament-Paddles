@@ -1,11 +1,18 @@
 package settings;
 
-class GlobalSettings {
+public class GlobalSettings {
     private int pointsToWin;
     private int difficulty;
     private int paddleSize;
 
-    private int setting4;
+    private String playerName;
+
+    public String getPlayerName(){
+        return playerName;
+    }
+    public void setPlayerName(String playerName){
+        this.playerName = playerName;
+    }
 
     public int getPointsToWin() {
         return pointsToWin;
@@ -29,9 +36,5 @@ class GlobalSettings {
 
     public void setPaddleSize(int paddleSize) {
         this.paddleSize = paddleSize;
-    }
-
-    public void setSetting4(int setting4) {
-        this.setting4 = setting4;
     }
 }

@@ -1,80 +1,91 @@
 package menus;
 
-import game.PlayingField;
-import menus.menuitems.Button;
-import menus.menuitems.CompositeButton;
-import menus.menuitems.SingleButton;
+import gameplay.PlayingField;
+import menus.pages.MainMenu;
+import menus.pages.Options;
+import menus.pages.seasonpages.SeasonOptions;
+import menus.pages.seasonpages.SeasonPage;
 import screen.Screen;
-import seasonlogic.Season;
-import settings.Settings;
+import settings.GlobalSettings;
 
 import java.awt.*;
-
+import java.awt.event.KeyEvent;
 
 public class Menus implements Page {
 
-    private SettingsUpdater settingsUpdater;
+    private static final SettingsUpdater SETTINGS_UPDATER = new SettingsUpdater();
 
-    private Settings settings;
+    private final GlobalSettings settings;
     private Page currentPage;
-    private Page mainMenu;
+    private final Page mainMenu;
 
-    private SeasonPages seasonPages;
-    private OptionsMenu options;
+    private SeasonPage currentSeasonPage;
+    private final Options options;
+    private final SeasonOptions seasonOptions;
     private Page exhibition;
-    private Season season;
     private static final Menus INSTANCE = new Menus();
 
     private Menus() {
-
-        settings = new Settings();
-        settingsUpdater = new SettingsUpdater();
-
-        Button exhibitionButton = new SingleButton.Builder()
-                .action(Menus::playExhibition)
-                .label("Exhibition")
-                .positionX(200)
-                .positionY(90)
-                .build();
-
-        Button playGameButton = new SingleButton.Builder()
-                .action(Menus::startSeason)
-                .label("Season")
-                .positionX(200)
-                .positionY(260)
-                .build();
-
-        Button optionsButton = new SingleButton.Builder()
-                .action(Menus::goToOptionsMenu)
-                .label("Options")
-                .positionX(200)
-                .positionY(430)
-                .build();
-        season = new Season();
-        mainMenu = new MainMenu("", new CompositeButton(playGameButton, optionsButton, exhibitionButton), null);
-        seasonPages = new SeasonPages(season);
-        options = new OptionsMenu();
+        settings = new GlobalSettings();
+        mainMenu = new MainMenu();
+        seasonOptions = new SeasonOptions(settings);
+        currentSeasonPage = seasonOptions;
+        options = new Options();
         currentPage = mainMenu;
+        updateGlobalSettings();
     }
 
-    public void startSeason() {
-        season.reset(settings.getNumberOfPlayers());
-        currentPage = seasonPages;
+    private void updateGlobalSettings(){
+        SETTINGS_UPDATER.updateSettings(settings, options);
+    }
+
+    public void update() {
+        updateScreen();
+    }
+    private void updateScreen() {
+        Screen.getInstance().update();
+    }
+
+
+    public void goToMainMenu() {
+        currentPage = mainMenu;
+        updateScreen();
+    }
+
+    public void goToOptions() {
+        currentPage = options;
+        updateScreen();
+    }
+
+    public void exitOptionsWithUpdate() {
+        options.submit();
+        updateGlobalSettings();
+        goToMainMenu();
+    }
+
+    public void exitOptionsWithoutUpdate() {
+        options.resetPrevious();
+        goToMainMenu();
+    }
+
+    public void goToSeasonOptions() {
+        currentPage = seasonOptions;
         updateScreen();
     }
 
     public void playExhibition() {
-        exhibition = new PlayingField(settings.getPointsToWin(), settings.getDifficulty());
+        exhibition = new PlayingField.Builder()
+                .pointsToWin(settings.getPointsToWin())
+                .paddleSize(settings.getPaddleSize())
+                .difficulty(settings.getDifficulty())
+                .build();
         currentPage = exhibition;
-        updateScreen();
-    }
-    public void reset() {
-        season.reset();
         updateScreen();
     }
 
     public void advanceSeasonPages() {
-        seasonPages.advance();
+        currentSeasonPage = currentSeasonPage.advance();
+        currentPage = currentSeasonPage;
         updateScreen();
     }
 
@@ -87,34 +98,41 @@ public class Menus implements Page {
         return INSTANCE;
     }
 
-    private void updateScreen() {
-        Screen.getInstance().update();
+    public void endGameplay(){
+        if(currentPage == exhibition){
+            goToMainMenu();
+        }
+        else{
+            advanceSeasonPages();
+        }
     }
 
-    public void goToMainMenu() {
-        currentPage = mainMenu;
-        updateScreen();
-    }
-
-    public void goToOptionsMenu() {
-        currentPage = options;
-        updateScreen();
-    }
-
-    @Override
-    public void onKeyPressed(char keyChar) {
-        currentPage.onKeyPressed(Character.toLowerCase(keyChar));
+    public boolean isFrames() {
+        return currentPage.isFrames();
     }
 
     @Override
-    public void onKeyReleased(char keyChar) {
-        currentPage.onKeyReleased(keyChar);
+    public boolean dragActive() {
+        return currentPage.dragActive();
+    }
+
+
+    @Override
+    public void onKeyPressed(KeyEvent e) {
+        currentPage.onKeyPressed(e);
+    }
+
+    @Override
+    public void onKeyReleased(KeyEvent e) {
+        currentPage.onKeyReleased(e);
     }
 
     @Override
     public void onDrag(int x, int y) {
         currentPage.onDrag(x, y);
-        updateScreen();
+        if(currentPage.dragActive()) {
+            updateScreen();
+        }
     }
 
     @Override
@@ -127,13 +145,25 @@ public class Menus implements Page {
         currentPage.onMouseReleased();
     }
 
-    public void exitOptions() {
-        settingsUpdater.updateSettings(settings, options);
-        currentPage = mainMenu;
+
+    public void resetGlobalDefaults() {
+        options.resetDefaults();
         updateScreen();
     }
 
-    public boolean isFrames() {
-        return currentPage == exhibition;
+    public void resetSeasonDefaults() {
+        seasonOptions.resetDefaults();
+        updateScreen();
+    }
+
+    public void onContinue() {
+        currentPage = currentSeasonPage;
+        updateScreen();
+    }
+
+    public void startNewSeason() {
+        currentSeasonPage = seasonOptions.advance();
+        currentPage = currentSeasonPage;
+        updateScreen();
     }
 }
