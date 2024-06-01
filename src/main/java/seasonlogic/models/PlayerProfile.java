@@ -3,17 +3,17 @@ package seasonlogic.models;
 import static seasonlogic.WinLoss.LOSS;
 import static seasonlogic.WinLoss.WIN;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import seasonlogic.WinLoss;
 
-public class PlayerProfile implements Comparable<PlayerProfile> {
+public class PlayerProfile implements Comparable<PlayerProfile>, Serializable {
 
   private static final String DEFAULT_STREAK = "W0";
 
-  private int seed;
+  private Integer seed;
 
   private final String name;
   private final int difficulty;
@@ -27,50 +27,8 @@ public class PlayerProfile implements Comparable<PlayerProfile> {
     seasonRecord = new ArrayList<>();
   }
 
-  public PlayerProfile(String saveString){
-    // name: Bob, difficulty: 2
-
-    String[] separateCommas = saveString.split(",");
-    String name = separateCommas[0].substring(6);
-    int difficulty = Integer.parseInt(separateCommas[1].substring(13));
-    int seed = Integer.parseInt(separateCommas[2].substring(7));
-
-    seasonRecord = new ArrayList<>();
-
-    String winsAndLosses = separateCommas[3].substring(9);
-
-    for(char c : winsAndLosses.toCharArray()){
-      switch(c){
-        case 'W':
-          receiveSeasonWin();
-          break;
-        default:
-          receiveSeasonLoss();
-          break;
-      }
-    }
-
-    this.name = name;
-    this.difficulty = difficulty;
-    this.seed = seed;
-
-
-  }
-
-
-  public String toSaveString(){
-    String saveString = "name: " + name + ", difficulty: " + difficulty + ", seed: " + seed + ", record: " + getRecordString();
-    return saveString;
-  }
-
-  private String getRecordString(){
-    return seasonRecord.stream()
-        .map(Object::toString)
-        .collect(Collectors.joining());
-  }
-
-  public int getSeed() {
-    return seed;
+  public Optional<Integer> getSeed() {
+    return Optional.ofNullable(seed);
   }
 
   public void setSeed(int seed) {

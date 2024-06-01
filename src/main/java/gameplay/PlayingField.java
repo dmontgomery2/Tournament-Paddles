@@ -4,6 +4,8 @@ import static common.Const.PLAYER_PADDLE_VELOCITY_MAGNITUDE;
 import static common.Const.WINDOW_HEIGHT;
 import static common.Const.WINDOW_WIDTH;
 
+import controller.Controller;
+import controller.Page;
 import gameplay.ai.AI;
 import gameplay.ai.concreteais.AIFactory;
 import gameplay.ball.Ball;
@@ -11,10 +13,11 @@ import gameplay.ballpaddlecollisionhandler.BallPaddleCollisionHandler;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import menus.Menus;
-import menus.Page;
 
 public class PlayingField implements Page {
+
+  private int mouseX;
+  private int mouseY;
 
   private static final Color PLAYER_PADDLE_COLOR = Color.BLUE;
   private static final Color COMPUTER_PADDLE_COLOR = Color.GREEN;
@@ -50,10 +53,12 @@ public class PlayingField implements Page {
     gameplayScore = new GameplayScore(builder.pointsToWin);
     ballPaddleCollisionHandler = new BallPaddleCollisionHandler(ball, playerPaddle, computerPaddle);
     inputHandler = new InputHandler(this);
+    mouseX = builder.mouseX;
+    mouseY = builder.mouseY;
   }
 
-  public void exit(){
-    Menus.getInstance().goToMainMenu();
+  public void exit() {
+    Controller.getInstance().goToMainMenu(mouseX, mouseY);
   }
 
   public static class Builder {
@@ -61,6 +66,8 @@ public class PlayingField implements Page {
     private int pointsToWin;
     private int paddleSize;
     private int difficulty;
+    private int mouseX;
+    private int mouseY;
 
     public Builder pointsToWin(int pointsToWin) {
       this.pointsToWin = pointsToWin;
@@ -74,6 +81,16 @@ public class PlayingField implements Page {
 
     public Builder difficulty(int difficulty) {
       this.difficulty = difficulty;
+      return this;
+    }
+
+    public Builder mouseX(int mouseX) {
+      this.mouseX = mouseX;
+      return this;
+    }
+
+    public Builder mouseY(int mouseY) {
+      this.mouseY = mouseY;
       return this;
     }
 
@@ -207,7 +224,7 @@ public class PlayingField implements Page {
   void unfreeze() {
     tryUnfreeze();
     if (gameOver) {
-      Menus.getInstance().endGameplay();
+      Controller.getInstance().endGameplay(mouseX, mouseY);
     }
   }
 
@@ -232,8 +249,14 @@ public class PlayingField implements Page {
   }
 
   @Override
-  public void onMouseReleased() {
-    inputHandler.handleMouseReleased();
+  public void onMouseMoved(int x, int y) {
+    mouseX = x;
+    mouseY = y;
+  }
+
+  @Override
+  public void onMouseReleased(int x, int y) {
+    inputHandler.handleMouseReleased(x, y);
   }
 
   @Override

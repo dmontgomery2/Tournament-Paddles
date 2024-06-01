@@ -1,6 +1,6 @@
 package seasonlogic;
 
-import common.genericinterfaces.Drawable;
+import common.generalinterfaces.Drawable;
 
 public interface SeasonStatus extends Drawable {
 

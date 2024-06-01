@@ -1,36 +1,29 @@
 package seasonlogic.calendar;
 
-import static common.customcollectors.CustomCollectors.toMatchups;
+import static java.util.stream.Collectors.toList;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import seasonlogic.models.Human;
 import seasonlogic.models.PlayerProfile;
 import seasonlogic.simulation.MatchSimulator;
 
-public class Day {
+public class Day implements Serializable {
 
-  private final Matchups matchups;
+  private final List<Matchup> matchups;
 
-  private final Matchups computerComputerMatchups;
+  private final List<Matchup> computerComputerMatchups;
 
-  public Day(Matchups matchups) {
+  public Day(List<Matchup> matchups) {
     this.matchups = matchups;
     computerComputerMatchups = matchups.stream()
         .filter(Matchup::doesNotContainHuman)
-        .collect(toMatchups());
+        .collect(toList());
   }
 
   public void simulateMatchups(MatchSimulator matchSimulator) {
     matchSimulator.simulateMatches(computerComputerMatchups);
-  }
-
-  public List<String> getMatchupsStrings() {
-    return matchups.getStrings();
-  }
-
-  public List<String> getResultsStrings() {
-    return matchups.getResultsStrings();
   }
 
   public Optional<Matchup> getHumanComputerMatchup() {
@@ -49,7 +42,7 @@ public class Day {
         humanComputerMatchup.getPlayer2() : humanComputerMatchup.getPlayer1();
   }
 
-  public Matchups getMatchups() {
+  public List<Matchup> getMatchups() {
     return matchups;
   }
 

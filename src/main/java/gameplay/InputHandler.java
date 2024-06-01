@@ -55,7 +55,7 @@ class InputHandler {
     //do nothing
   }
 
-  void handleMouseReleased() {
+  void handleMouseReleased(int x, int y) {
     //do nothing
   }
 }

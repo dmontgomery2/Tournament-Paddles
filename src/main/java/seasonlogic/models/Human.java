@@ -1,7 +1,10 @@
 package seasonlogic.models;
 
-public class Human extends PlayerProfile {
-    public Human(String name) {
-        super(name, -1);
-    }
+import java.io.Serializable;
+
+public class Human extends PlayerProfile implements Serializable {
+
+  public Human(String name) {
+    super(name, -1);
+  }
 }

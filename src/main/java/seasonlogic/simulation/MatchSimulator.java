@@ -1,11 +1,11 @@
 package seasonlogic.simulation;
 
-import seasonlogic.calendar.Matchup;
-import seasonlogic.calendar.Matchups;
-
+import java.io.Serializable;
+import java.util.List;
 import java.util.Random;
+import seasonlogic.calendar.Matchup;
 
-public class MatchSimulator {
+public class MatchSimulator implements Serializable {
 
   private static final Random RANDOM = new Random();
 
@@ -16,25 +16,38 @@ public class MatchSimulator {
   }
 
 
-  public void simulateMatches(Matchups matchups) {
+  public void simulateMatches(List<Matchup> matchups) {
     matchups.stream()
         .filter(Matchup::doesNotContainHuman)
         .forEach(this::simulateMatch);
   }
 
   private void simulateMatch(Matchup matchup) {
-    int loserScore = RANDOM.nextInt(pointsToWin);
-    if (player1Wins(matchup)) {
+    RandomizationResult randomizationResult = getRandomizationResult(matchup);
+    if (randomizationResult.player1Won()) {
       matchup.setPlayer1Score(pointsToWin);
-      matchup.setPlayer2Score(loserScore);
+      matchup.setPlayer2Score(getLoserScore(randomizationResult.getPercentageToLoss()));
     } else {
       matchup.setPlayer2Score(pointsToWin);
-      matchup.setPlayer1Score(loserScore);
+      matchup.setPlayer1Score(getLoserScore(randomizationResult.getPercentageToLoss()));
     }
   }
 
-  private boolean player1Wins(Matchup matchup) {
-    return RANDOM.nextInt(100) < 50 + 5 * (matchup.getPlayer1().getDifficulty()
-        - matchup.getPlayer2().getDifficulty());
+  private RandomizationResult getRandomizationResult(Matchup matchup) {
+    int cutoff = 10 + matchup.getPlayer1().getDifficulty() - matchup.getPlayer2().getDifficulty();
+    int randomInt = RANDOM.nextInt(20);
+    boolean player1Wins = randomInt < cutoff;
+    float percentageToLoss;
+    if (player1Wins) {
+      percentageToLoss = (1f + randomInt) / (float) cutoff;
+    } else {
+      percentageToLoss = (20f - randomInt) / (20f - cutoff);
+    }
+
+    return new RandomizationResult(percentageToLoss, player1Wins);
+  }
+
+  private int getLoserScore(float percentageToLoss) {
+    return Math.min((int) (percentageToLoss * pointsToWin), pointsToWin - 1);
   }
 }

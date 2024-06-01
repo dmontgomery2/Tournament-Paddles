@@ -19,10 +19,11 @@ public class PositionalAI implements AI {
 
   @Override
   public void assess() {
-    if (ball.getCenterY() < paddle.getPositionY()) {
-      paddle.moveUp(velocityMagnitude);
+    int posDiff = ball.getCenterY() - paddle.getPositionY();
+    if (posDiff < 0) {
+      paddle.moveUp(Math.min(velocityMagnitude, -posDiff));
     } else {
-      paddle.moveDown(velocityMagnitude);
+      paddle.moveDown(Math.min(velocityMagnitude, posDiff));
     }
   }
 }

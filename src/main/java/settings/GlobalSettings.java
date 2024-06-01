@@ -1,40 +1,42 @@
 package settings;
 
 public class GlobalSettings {
-    private int pointsToWin;
-    private int difficulty;
-    private int paddleSize;
 
-    private String playerName;
+  private int pointsToWin;
+  private int difficulty;
+  private int paddleSize;
 
-    public String getPlayerName(){
-        return playerName;
-    }
-    public void setPlayerName(String playerName){
-        this.playerName = playerName;
-    }
+  private String playerName;
 
-    public int getPointsToWin() {
-        return pointsToWin;
-    }
+  public String getPlayerName() {
+    return playerName;
+  }
 
-    public void setPointsToWin(int pointsToWin) {
-        this.pointsToWin = pointsToWin;
-    }
+  public void setPlayerName(String playerName) {
+    this.playerName = playerName;
+  }
 
-    public int getDifficulty() {
-        return difficulty;
-    }
+  public int getPointsToWin() {
+    return pointsToWin;
+  }
 
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
+  public void setPointsToWin(int pointsToWin) {
+    this.pointsToWin = pointsToWin;
+  }
 
-    public int getPaddleSize() {
-        return paddleSize;
-    }
+  public int getDifficulty() {
+    return difficulty;
+  }
 
-    public void setPaddleSize(int paddleSize) {
-        this.paddleSize = paddleSize;
-    }
+  public void setDifficulty(int difficulty) {
+    this.difficulty = difficulty;
+  }
+
+  public int getPaddleSize() {
+    return paddleSize;
+  }
+
+  public void setPaddleSize(int paddleSize) {
+    this.paddleSize = paddleSize;
+  }
 }

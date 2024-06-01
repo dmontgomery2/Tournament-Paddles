@@ -1,6 +1,6 @@
 package seasonlogic.calendar;
 
-import static common.customcollectors.CustomCollectors.toMatchups;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +14,7 @@ class MatchupsCreator {
 
   private static final Random RANDOM = new Random();
 
-  public Matchups getSeasonDayMatchups(List<PlayerProfile> computers, Human human) {
+  public List<Matchup> getSeasonDayMatchups(List<PlayerProfile> computers, Human human) {
     List<PlayerProfile> computersCopy = new ArrayList<>(computers);
     Collections.shuffle(computersCopy);
 
@@ -23,13 +23,13 @@ class MatchupsCreator {
     Matchup humanComputerMatchup = createHumanComputerMatchup(human,
         opponentForHuman);
 
-    Matchups computerComputerMatchups = createComputerComputerMatchups(
+    List<Matchup> computerComputerMatchups = createComputerComputerMatchups(
         computersCopy);
 
-    Matchups allMatchups = new Matchups();
+    List<Matchup> allMatchups = new ArrayList<>();
     allMatchups.add(humanComputerMatchup);
     allMatchups.addAll(computerComputerMatchups);
-    allMatchups.shuffle();
+    Collections.shuffle(allMatchups);
     return allMatchups;
   }
 
@@ -38,8 +38,8 @@ class MatchupsCreator {
         : new Matchup(opponentForHuman, human);
   }
 
-  private Matchups createComputerComputerMatchups(List<PlayerProfile> computers) {
-    Matchups computerComputerMatchups = new Matchups();
+  private List<Matchup> createComputerComputerMatchups(List<PlayerProfile> computers) {
+    List<Matchup> computerComputerMatchups = new ArrayList<>();
     for (int j = 0; j < computers.size() / 2; j++) {
       PlayerProfile computer1 = computers.get(j);
       PlayerProfile computer2 = computers.get(computers.size() - 1 - j);
@@ -48,19 +48,19 @@ class MatchupsCreator {
     return computerComputerMatchups;
   }
 
-  public Matchups getMatchupsForActiveSeries(List<PlayoffSeries> activeSeries) {
+  public List<Matchup> getMatchupsForActiveSeries(List<PlayoffSeries> activeSeries) {
     return convertSeriesToMatchups(activeSeries);
   }
 
-  private Matchups convertSeriesToMatchups(List<PlayoffSeries> series) {
+  private List<Matchup> convertSeriesToMatchups(List<PlayoffSeries> series) {
     return series.stream()
         .map(PlayoffSeries::convertToMatchup)
-        .collect(toMatchups());
+        .collect(toList());
   }
 
   public void scheduleInitialSeries(List<Day> days, List<PlayoffSeries> playoffSeries) {
     int gamesToWin = playoffSeries.get(0).getGamesToWin();
-    Matchups matchups = convertSeriesToMatchups(playoffSeries);
+    List<Matchup> matchups = convertSeriesToMatchups(playoffSeries);
 
     for (int i = 0; i < gamesToWin; i++) {
       days.add(new Day(matchups));

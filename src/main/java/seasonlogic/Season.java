@@ -1,28 +1,34 @@
 package seasonlogic;
 
 import gameplay.GameplayResult;
-import seasonlogic.models.PlayerProfile;
-
 import java.util.List;
 import java.util.Optional;
+import seasonlogic.calendar.Matchup;
+import seasonlogic.models.PlayerProfile;
 
 public interface Season {
-    int getPointsToWin();
-    int getPaddleSize();
-    String getDay();
-    Optional<PlayerProfile> getOpponentForHuman();
-    SeasonStatus getStatus();
-    Season advance();
-    void simulateMatchups();
-    void recordGameplayResult(GameplayResult gameplayResult);
 
-    List<String> getResultsStrings();
-    List<String> getMatchupsStrings();
+  int getPointsToWin();
 
+  List<Matchup> getMatchups();
 
+  int getPaddleSize();
 
+  String getDay();
 
+  Optional<PlayerProfile> getOpponentForHuman();
 
-    boolean isHumanActive();
-    PlayerProfile getChampion();
+  SeasonStatus getStatus();
+
+  Season advance();
+
+  void simulateMatchups();
+
+  void recordGameplayResult(GameplayResult gameplayResult);
+
+  boolean isHumanActive();
+
+  PlayerProfile getChampion();
+
+  boolean isMaximumDifficulty();
 }

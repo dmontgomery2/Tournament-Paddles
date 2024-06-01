@@ -1,6 +1,7 @@
 package seasonlogic.calendar;
 
 import gameplay.GameplayResult;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import seasonlogic.models.PlayerProfile;
 import seasonlogic.playoffs.PlayoffSeries;
 import seasonlogic.simulation.MatchSimulator;
 
-public class Calendar {
+public class Calendar implements Serializable {
 
   private static final MatchupsCreator MATCHUPS_CREATOR = new MatchupsCreator();
   private final List<Day> days;
@@ -78,7 +79,7 @@ public class Calendar {
     return getCurrentDay().getHumanComputerMatchup();
   }
 
-  public Matchups getMatchups() {
+  public List<Matchup> getMatchups() {
     return getCurrentDay().getMatchups();
   }
 
@@ -100,13 +101,5 @@ public class Calendar {
 
   private Day getCurrentDay() {
     return days.get(currentDaysIndex);
-  }
-
-  public List<String> getMatchupsStrings() {
-    return getCurrentDay().getMatchupsStrings();
-  }
-
-  public List<String> getResultsStrings() {
-    return getCurrentDay().getResultsStrings();
   }
 }
