@@ -90,16 +90,6 @@ public class PlayerProfile implements Comparable<PlayerProfile>, Serializable {
   }
 
   @Override
-  public String toString() {
-    return "name=" + name +
-        ", wins=" + seasonWins +
-        ", losses=" + seasonLosses +
-        ", last10=" + getLast10() +
-        ", streak=" + getStreak() +
-        ", difficulty=" + difficulty;
-  }
-
-  @Override
   public int compareTo(PlayerProfile o) {
     int comparingWins = Integer.compare(o.seasonWins, seasonWins);
     if (comparingWins != 0) {
